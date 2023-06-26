@@ -20,10 +20,10 @@ class RegisterForm(FlaskForm):
     email = StringField(label='Email', validators=[Email(), DataRequired()])
     password1 = PasswordField(label='Password', validators=[Length(min=8), DataRequired()])
     password2 = PasswordField(label='Confirm Password', validators=[EqualTo('password1', message='Passwords must match'), DataRequired()])
-    submit = SubmitField(label='Register')
+    submit = SubmitField(label='Sing up')
 
 
 class LoginForm(FlaskForm):
     username = StringField(label='Username', validators=[Length(min=4, max=25), DataRequired()])
     password = PasswordField(label='Password', validators=[Length(min=8), DataRequired()])
-    submit = SubmitField(label='Login')
+    submit = SubmitField(label='Sing in')

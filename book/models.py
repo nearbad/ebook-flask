@@ -1,4 +1,4 @@
-from book import db, login_manager
+from book import db, login_manager, images
 from book import bcrypt
 from flask_login import UserMixin
 
@@ -21,3 +21,27 @@ class User(db.Model, UserMixin):
     @password.setter
     def password(self, plain_text_password):
         self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+
+
+class Book(db.Model):
+    __tablename__ = 'books'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    author = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text)
+    price = db.Column(db.Float, nullable=False)
+    cover_image = db.Column(db.String(255))
+
+    def __init__(self, title, author, description, price, cover_image):
+        self.title = title
+        self.author = author
+        self.description = description
+        self.price = price
+        self.cover_image = cover_image
+
+    def save_cover_image(self, app, image):
+        with app.app_context():
+            filename = images.save(image)
+            self.cover_image = filename
+            db.session.commit()

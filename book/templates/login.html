@@ -1,5 +1,9 @@
 {% extends 'layout/base.html' %}
 
+{% block title %}
+<title>Signing in</title>
+{% endblock %}
+s
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center mt-2">
@@ -7,12 +11,12 @@
             <form method="POST" class="form">
                 {{ form.hidden_tag() }}
                 <div class="row my-3">
-                    <label for="username" class="form-label">Username:</label>
-                    {{ form.username(class="col-8 form-control", placeholder="Username", id="username") }}
+                    <label for="username" class="form-label text-muted">Username:</label>
+                    {{ form.username(class="col-8 form-control", id="username") }}
                 </div>
                 <div class="row my-3">
-                    <label for="password" class="form-label">Password:</label>
-                    {{ form.password(class="col-8 form-control", placeholder="Password", id="password") }}
+                    <label for="password" class="form-label text-muted">Password:</label>
+                    {{ form.password(class="col-8 form-control", id="password") }}
                 </div>
                 <div class="row my-3 justify-content-center">
                     <div class="col-4">
@@ -20,7 +24,7 @@
                     </div>
                 </div>
             </form>
-            <div class="text-muted text-center m-3">Do not have an account? <a href="{{ url_for('register') }}">Register</a></div>
+            <div class="text-muted text-center m-3">Do not have an account? <a href="{{ url_for('register') }}">Sign up</a></div>
         </div>
     </div>
 </div>

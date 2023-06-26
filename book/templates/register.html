@@ -1,5 +1,9 @@
 {% extends 'layout/base.html' %}
 
+{% block title %}
+<title>Singing up</title>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -28,7 +32,7 @@
                     </div>
                 </div>
             </form>
-            <div class="text-muted text-center m-3">Already have an account? <a href="{{ url_for('login') }}">Login</a></div>
+            <div class="text-muted text-center m-3">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></div>
         </div>
     </div>
 </div>

@@ -1,0 +1,35 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="POST" action="/books/create" enctype="multipart/form-data">
+                <div class="form-group my-2">
+                    <label for="title">Название книги:</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="form-group my-2">
+                    <label for="author">Автор:</label>
+                    <input type="text" class="form-control" id="author" name="author" required>
+                </div>
+                <div class="form-group my-2">
+                    <label for="description">Описание:</label>
+                    <textarea class="form-control" id="description" name="description" required></textarea>
+                </div>
+                <div class="form-group my-2">
+                    <label for="price">Цена:</label>
+                    <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                </div>
+                <div class="form-group my-2">
+                    <label for="formFile" class="form-label">Обложка</label>
+                    <input class="form-control" type="file" id="formFile" name="cover_image" required>
+                </div>
+                <div class="form-group my-2 text-center">
+                    <button type="submit" class="btn btn-outline-dark my-2">Создать книгу</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
 from book import app, db, bcrypt
 from flask_login import login_user, logout_user
-from .models import User
+from .models import User, Book
 from .forms import RegisterForm, LoginForm
 
 
@@ -46,3 +46,26 @@ def logout():
     flash('You have been logged out!', category='info')
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/books/create', methods=['POST', 'GET'])
+def create_book():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        author = request.form.get('author')
+        description = request.form.get('description')
+        price = float(request.form.get('price'))
+        cover_image = request.files['cover_image']
+
+        new_book = Book(title=title, author=author, description=description, price=price, cover_image=cover_image)
+        new_book.save_cover_image(app, cover_image)
+        flash('Book created!', category='success')
+        return redirect(url_for('index'))
+    else:
+        return render_template('create_book.html')
+
