@@ -1,6 +1,9 @@
-from book import db, login_manager, images
+import os
+from book import db, login_manager, images, app
 from book import bcrypt
 from flask_login import UserMixin
+from werkzeug.utils import secure_filename
+from flask import current_app
 
 
 @login_manager.user_loader
@@ -33,15 +36,25 @@ class Book(db.Model):
     price = db.Column(db.Float, nullable=False)
     cover_image = db.Column(db.String(255))
 
-    def __init__(self, title, author, description, price, cover_image):
-        self.title = title
-        self.author = author
-        self.description = description
-        self.price = price
-        self.cover_image = cover_image
-
-    def save_cover_image(self, app, image):
-        with app.app_context():
-            filename = images.save(image)
-            self.cover_image = filename
+    def save_cover_image(self, image):
+        if image and self.allowed_file(image.filename):
+            # Генерируем безопасное имя файла
+            filename = secure_filename(image.filename)
+            # Сохраняем файл в директорию загрузок
+            image_path = os.path.join(current_app.config['UPLOADED_IMAGES_DEST'], filename)
+            image.save(image_path)
+            # Обновляем поле cover_image
+            self.cover_image = image_path
             db.session.commit()
+
+    @staticmethod
+    def allowed_file(filename):
+        # Проверяем расширение файла
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+    def image_url(self):
+        if self.cover_image:
+            return current_app.config['UPLOADED_IMAGES_URL'] + '/' + self.cover_image
+        else:
+            return None
+
