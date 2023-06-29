@@ -9,7 +9,8 @@ from .forms import RegisterForm, LoginForm
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    books = Book.query.all()
+    return render_template('index.html', books=books)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -55,20 +56,30 @@ def about():
     return render_template('about.html')
 
 
-# @app.route('/books/create', methods=['POST', 'GET'])
-# def create_book():
-#     if request.method == 'POST':
-#         title = request.form.get('title')
-#         author = request.form.get('author')
-#         description = request.form.get('description')
-#         price = float(request.form.get('price'))
-#         cover_image = request.files['cover_image']
-#
-#         new_book = Book(title=title, author=author, description=description, price=price, cover_image=cover_image)
-#         new_book.save_cover_image(app, cover_image)
-#         flash('Book created!', category='success')
-#         return redirect(url_for('index'))
-#     else:
-#         return render_template('create_book.html')
-
 admin.add_view(BookView(Book, db.session))
+
+
+@app.route('/ebooks')
+def all_books():
+    books = Book.query.all()
+    return render_template('books.html', books=books)
+
+
+@app.route('/ebook/<int:book_id>')
+def book_detail(book_id):
+    book = Book.query.get(book_id)
+    return render_template('book_detail.html', book=book)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    query = request.form.get('query')
+    print(query)
+    if query:
+        books = Book.query.filter(
+            (Book.title.ilike(f'%{query}%')) |
+            (Book.author.ilike(f'%{query}%'))
+        ).all()
+    else:
+        books = []
+    return render_template('search_results.html', books=books)

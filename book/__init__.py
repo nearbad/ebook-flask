@@ -28,3 +28,4 @@ app.config['UPLOADED_IMAGES_URL'] = '/static/uploads'
 configure_uploads(app, images)
 
 from book import routes
+

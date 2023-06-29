@@ -3,7 +3,7 @@ from book import db, login_manager, images, app
 from book import bcrypt
 from flask_login import UserMixin
 from werkzeug.utils import secure_filename
-from flask import current_app
+from flask import current_app, url_for
 
 
 @login_manager.user_loader
@@ -34,27 +34,16 @@ class Book(db.Model):
     author = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
     price = db.Column(db.Float, nullable=False)
-    cover_image = db.Column(db.String(255))
+    cover_image = db.Column(db.String(255), nullable=True)
 
-    def save_cover_image(self, image):
-        if image and self.allowed_file(image.filename):
-            # Генерируем безопасное имя файла
-            filename = secure_filename(image.filename)
-            # Сохраняем файл в директорию загрузок
-            image_path = os.path.join(current_app.config['UPLOADED_IMAGES_DEST'], filename)
-            image.save(image_path)
-            # Обновляем поле cover_image
-            self.cover_image = image_path
-            db.session.commit()
-
-    @staticmethod
-    def allowed_file(filename):
-        # Проверяем расширение файла
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+    def save_cover_image(self, cover_image):
+        if cover_image:
+            filename = secure_filename(cover_image.filename)
+            cover_image.save(os.path.join(app.config['UPLOADED_IMAGES_DEST'], filename))
+            self.cover_image = filename
 
     def image_url(self):
         if self.cover_image:
-            return current_app.config['UPLOADED_IMAGES_URL'] + '/' + self.cover_image
-        else:
-            return None
+            return url_for('static', filename='uploads/' + self.cover_image)
+        return None
 
