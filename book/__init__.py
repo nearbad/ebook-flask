@@ -19,8 +19,6 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 
-
-
 # Создание экземпляра UploadSet для загрузки файлов
 images = UploadSet('images', IMAGES)
 pdfs = UploadSet('pdfs', DOCUMENTS)
@@ -39,6 +37,6 @@ configure_uploads(app, pdfs)
 
 from .admin import MyAdminIndexView
 
-admin = Admin(app, index_view=MyAdminIndexView())
+admin = Admin(app, index_view=MyAdminIndexView(), template_mode='bootstrap4', base_template='admin/base.html')
 
 from book import routes

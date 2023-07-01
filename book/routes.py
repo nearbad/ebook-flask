@@ -89,7 +89,7 @@ def all_books():
     min_price_selected = request.args.get('min_price')
     max_price_selected = request.args.get('max_price')
     books = filter_books(genres=selected_genres, min_price=min_price_selected, max_price=max_price_selected)
-    genres = ['Fantasy', 'Detective', 'Horror', 'Business', 'Romance']
+    genres = ['Fantasy', 'Detective', 'Horror', 'Business', 'Romance', 'Novel', 'Fiction']
     return render_template('books.html', books=books, genres=genres, min_price=min_price, max_price=max_price)
 
 
@@ -140,7 +140,7 @@ def create_payment_intent():
                 'currency': currency,
                 'unit_amount': int(book.price*100),
                 'product_data': {
-                    'name': book.title,
+                    'name': f"{book.title} - by {book.author}",
                     'description': book.description,
                 },
             },
