@@ -12,14 +12,24 @@ class MyAdminIndexView(AdminIndexView):
     def index(self):
         if not current_user.is_authenticated:
             return redirect(url_for('access_denied'))
-        elif not current_user.is_superuser:
-            return redirect(url_for('access_denied'))
+        # elif not current_user.is_superuser:
+        #     return redirect(url_for('access_denied'))
         return super(MyAdminIndexView, self).index()
+
+
+class PdfFileValidator:
+    def __call__(self, form, field):
+        if field.data:
+            if not field.data.filename.endswith('.pdf'):
+                raise validators.ValidationError('Please upload a PDF file.')
 
 
 class BookView(ModelView):
     form_extra_fields = {
-        'cover_image': FileUploadField('Обложка', base_path=app.config['UPLOADED_IMAGES_DEST'], validators=[validators.DataRequired()])
+        'cover_image': FileUploadField('Cover', base_path=app.config['UPLOADED_IMAGES_DEST'],
+                                       validators=[validators.DataRequired()]),
+        'file': FileUploadField('PDF', base_path=app.config['UPLOADED_PDFS_DEST'], validators=[
+            validators.DataRequired(),
+            PdfFileValidator()
+        ])
     }
-
-

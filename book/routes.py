@@ -1,4 +1,6 @@
-from flask import render_template, redirect, url_for, flash, request
+import os
+
+from flask import render_template, redirect, url_for, flash, request, jsonify, send_file
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import func
 
@@ -94,7 +96,8 @@ def all_books():
 @app.route('/ebook/<int:book_id>')
 def book_detail(book_id):
     book = Book.query.get(book_id)
-    return render_template('book_detail.html', book=book)
+    stripe_public_key = os.getenv('STRIPE_PUBLIC_KEY')
+    return render_template('book_detail.html', book=book, STRIPE_PUBLIC_KEY=stripe_public_key)
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -114,3 +117,56 @@ def search():
 @app.route('/access_denied')
 def access_denied():
     return render_template('access_denied.html')
+
+
+@app.route('/create-payment-intent', methods=['POST'])
+def create_payment_intent():
+    # Получите данные из POST-запроса
+    data = request.get_json()
+    amount = data['amount']
+    currency = data['currency']
+    book = Book.query.get(data['book_id'])
+
+    # Здесь вам нужно создать платежный интент и получить clientSecret от Stripe
+    # Вам потребуется использовать ваш приватный ключ API Stripe для выполнения этой операции
+
+    # Пример создания платежного интента через API Stripe
+    import stripe
+    stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': currency,
+                'unit_amount': int(book.price*100),
+                'product_data': {
+                    'name': book.title,
+                    'description': book.description,
+                },
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=url_for('payment_success', book_id=book.id, _external=True),
+    )
+    # Верните clientSecret в ответе
+    return jsonify({
+        'clientSecret': session.id
+    })
+
+
+@app.route('/payment-success/<int:book_id>')
+def payment_success(book_id):
+    book = Book.query.get_or_404(book_id)
+
+    # выполните действия, связанные с загрузкой файла и получите путь к файлу
+    file_path = book.file_url() # Здесь предполагается, что у модели Book есть метод `get_file_path()`, который возвращает путь к файлу
+
+    # выполняем автоматическую загрузку файла
+    return redirect(url_for('download_file', filename=file_path))
+
+
+@app.route('/download/<path:filename>')
+def download_file(filename):
+    # отправляем файл для загрузки
+    return send_file(filename, as_attachment=False)
