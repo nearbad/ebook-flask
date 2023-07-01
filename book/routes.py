@@ -109,3 +109,8 @@ def search():
     else:
         books = []
     return render_template('search_results.html', books=books)
+
+
+@app.route('/access_denied')
+def access_denied():
+    return render_template('access_denied.html')

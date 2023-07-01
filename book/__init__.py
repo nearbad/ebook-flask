@@ -6,7 +6,6 @@ from flask_login import LoginManager
 from flask_uploads import UploadSet, IMAGES
 from flask_admin import Admin
 from flask_uploads import configure_uploads
-from werkzeug.utils import secure_filename
 
 
 secret_key = os.urandom(32)
@@ -16,7 +15,8 @@ app.config['SECRET_KEY'] = secret_key
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-admin = Admin(app)
+
+
 
 # Создание экземпляра UploadSet для загрузки изображений
 images = UploadSet('images', IMAGES)
@@ -27,5 +27,8 @@ app.config['UPLOADED_IMAGES_URL'] = '/static/uploads'
 # Конфигурация загрузчика изображений
 configure_uploads(app, images)
 
+from .admin import MyAdminIndexView
+
+admin = Admin(app, index_view=MyAdminIndexView())
 from book import routes
 
