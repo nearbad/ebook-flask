@@ -1,5 +1,10 @@
 # InkSpire - Simple Flask-based E-Book Selling Website
 
+## Beta Version
+
+You can visit the beta version of the site by clicking [here](http://inkspire.pythonanywhere.com/). Please note that this version is still under development and may contain bugs or unfinished features. Your feedback and suggestions are highly appreciated as we work towards improving InkSpire.
+
+
 ## Table of Contents
 
 - [Introduction](#introduction)
